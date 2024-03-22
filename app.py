@@ -22,7 +22,23 @@ def overlay_text(frame, text):
 
     cv2.putText(frame, text, (x, y), font, font_scale, color, thickness)
 
-# for video
+# distance time wrapping but it was not working as expected. no idea why
+def dtw(s, t):
+    n, m = len(s), len(t)
+    dtw_matrix = np.zeros((n+1, m+1))
+    for i in range(n+1):
+        for j in range(m+1):
+            dtw_matrix[i, j] = np.inf
+    dtw_matrix[0, 0] = 0
+
+    for i in range(1, n+1):
+        for j in range(1, m+1):
+            cost = np.linalg.norm(s[i-1] - t[j-1])
+            dtw_matrix[i, j] = cost + min(dtw_matrix[i-1, j], dtw_matrix[i, j-1], dtw_matrix[i-1, j-1])
+
+    return dtw_matrix[n, m]
+
+# for video i am using cosine similarity to compare the gestures
 def load_gesture_representation(gesture_video_path,test_video_path, threshold=0.8): 
     cap_gesture = cv2.VideoCapture(gesture_video_path)
     features_gestures = []
@@ -39,6 +55,10 @@ def load_gesture_representation(gesture_video_path,test_video_path, threshold=0.
     cap_gesture.release()
     desired_gesture = np.mean(features_gestures, axis=0)
     desired_gesture_max = np.max(features_gestures, axis=0)
+    desired_gesture = np.mean(desired_gesture, axis=(1, 2))
+    print(desired_gesture.shape)
+    print(desired_gesture_max.shape)
+    # print(features_gestures.shape)
     window_frames = []
     cap = cv2.VideoCapture(test_video_path)
     while(cap.isOpened()):
@@ -52,10 +72,11 @@ def load_gesture_representation(gesture_video_path,test_video_path, threshold=0.
         if len(window_frames) > len(features_gestures):
             window_frames.pop(0)
         if len(window_frames) == len(features_gestures):
-            similarity1 = np.dot(np.mean(window_frames, axis=0).flatten(), desired_gesture.flatten()) / (np.linalg.norm(np.mean(window_frames, axis=0)) * np.linalg.norm(desired_gesture))
-            # similarity2 = np.dot(np.max(window_frames, axis=0).flatten(), desired_gesture_max.flatten()) / (np.linalg.norm(np.mean(window_frames, axis=0)) * np.linalg.norm(desired_gesture_max))
-            # if similarity1 > threshold and similarity2 > threshold:
-            if similarity1 > threshold:
+            window_frames_temp = np.mean(window_frames, axis=(0))
+            similarity = dtw(np.mean(window_frames_temp, axis=(1,2)), desired_gesture)
+            print("similarity : ")
+            print(similarity)
+            if similarity < 7:
                 overlay_text(frame, "DETECTED")
         cv2.imshow('Frame', frame)
         if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -89,11 +110,8 @@ def load_image_gesture_representation(gesture_image_path, test_video_path, thres
     cv2.destroyAllWindows()
 
 
-# Load pre-trained MobileNetV2 model
-
-# Load and preprocess the desired gesture image
-desired_gesture_path = 'd5.mp4'  # Update with your desired gesture image filename
-test_path = 'test5.mp4'  # Update with your test video filename
+desired_gesture_path = 'w_d8.mp4'  # Update with your desired gesture image filename
+test_path = 'women_rope.mp4'  # Update with your test video filename
 file_extension = os.path.splitext(desired_gesture_path)[1]
 if file_extension in ['.jpg','.jpeg','.png']:
     load_image_gesture_representation(desired_gesture_path, test_path, threshold=0.8)
