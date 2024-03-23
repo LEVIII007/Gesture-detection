@@ -30,6 +30,9 @@ In this project, EfficientNetB0 is chosen as the model for gesture recognition d
 **for gesture video** : I have used the sliding window technique on the test video just like finding a substring in a given string. the window is chosen to be of length of gesture video, frames are added to the window till the window size becomes equal to the gesture video size. then mean is taken. after that I am comparing feature vectors using the **Distance time wrapping** algorithm which is good for detecting gestures even if the speed of gestures in different.
 I also tried using the cosine similarity function and it also gave satisfactory results.
 
+![Time-sliding-window-technique](https://github.com/LEVIII007/Gesture-detection/assets/132750919/14d341cd-66be-4ddd-b571-5d1a5ae98ea8)
+
+
 # Detection Algorithm
 The algorithm for gesture detection involves comparing the features extracted from the desired gesture representation with the features extracted from frames of the test video. The similarity between features is calculated using Dynamic Time Warping (DTW) for video gestures and cosine similarity for image gestures.
 
