@@ -25,9 +25,9 @@ For the gesture video: After converting each frame to a feature vector, the Mean
 
 In this project, EfficientNetB0 is chosen as the model for gesture recognition due to its efficiency and good performance. EfficientNetB0 strikes a balance between model size and accuracy, making it suitable even for mobile applications with limited computational resources.
 
-**For gesture image** : I am comparing the image feature vector to each frame of test video using cosine similarity. threshold is 0.9. I also tried using combination of mean and max pooling but there was not any big difference.
+**For gesture image** : Just like we find given number in an array. I am comparing the gesture image feature vector to each frame of test video using cosine similarity. the threshold for detection is 0.9. I also tried using combination of mean and max pooling but there was not any big difference.
 
-**for gesture video** : I have used the sliding window technique on the test video just like finding a substring in a given string. the window is chosen to be of length of gesture video, frames are added to the window till the window size becomes equal to the gesture video size. then mean is taken. after that I am comparing feature vectors using the **Distance time wrapping** algorithm which is good for detecting gestures even if the speed of gestures in different.
+**for gesture video** : I have used the sliding window technique on the test video just like finding a substring in a given string. the window is chosen to be of length of gesture video, test video frames are added to the window till the window size becomes equal to the gesture video size. then mean is taken. after that I am comparing feature vectors using the **Distance time wrapping** algorithm which is good for detecting gestures even if the speed of gestures in different.
 I also tried using the cosine similarity function and it also gave satisfactory results.
 
 ![Time-sliding-window-technique](https://github.com/LEVIII007/Gesture-detection/assets/132750919/14d341cd-66be-4ddd-b571-5d1a5ae98ea8)
